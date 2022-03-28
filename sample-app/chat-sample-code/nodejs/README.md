@@ -21,36 +21,42 @@ Open input inputData.js file and modify the below details
 
 ```json
 {
-    userdata: [{
-        grant_type: "password", // grant_type will be password
-        username: "USER1_NAME", // provide your yourname
-        password: "PASSWORD", // provide password for user
-        account_id: "ACCOUNT_ID" // provide account_id for user
-    }{
-        grant_type: "password", // grant_type will be password
-        username: "USER2_NAME", // provide your yourname
-        password: "PASSWORD", // provide password for user
-        account_id: "ACCOUNT_ID" // provide account_id for user
+    userData: [{
+        response_type: "code",       // no change needed
+        username: "USER_NAME",       // provide your username for user 1
+        password: "PASSWORD",        // provide password for user
+        account_id: "ACCOUNT_ID",    // provide account_id for user
+    },
+    {
+        response_type: "code",       // no change needed
+        username: "USER_NAME",       // provide your username for user 2
+        password: "PASSWORD",        // provide password for user
+        account_id: "ACCOUNT_ID",    // provide account_id for user
     }],
+    appData: {
+        client_id: "CLIENT_ID"       // provide valid unique clientId issued by Mitel
+    },
     conversationData: {
         "stream": false,
         "hidden": true,
         "generateSystemMessages": false,
+        // originalParticipants values will be replaced with real value at runtime
         "originalParticipants": [
             {
                 "type": "USER",
-                "participantId": "USER_ID"  // provide user_id (user 1)
+                "participantId": "USER1_ID"
             },
             {
                 "type": "USER",
-                "participantId": "USER_ID"  // provide user_id (User 2) 
+                "participantId": "USER2_ID"
             }
         ]
     },
     messageData: {
-        "body": "MESSAGE_BODY",     // Message body not greater than 1024 characters
+        "body": "Hello World!",
         "contentType": "text/plain"
     }
+
 }
 ```
 
