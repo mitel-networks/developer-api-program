@@ -21,10 +21,15 @@ Open input inputData.js file and modify the below details
 
 ```json
 {
-    grant_type: "password" (no change needed for grant_type)
-    username: YOUR_USERNAME
-    password: PASSWORD
-    account_id: ACCOUNT_ID
+    userdata: {
+        response_type: "code",       // no change needed
+        username: "USER_NAME",       // provide your username for user 1
+        password: "PASSWORD",        // provide password for user
+        account_id: "ACCOUNT_ID",    // provide account_id for user
+    },
+    appData: {
+        client_id: "CLIENT_ID"       // provide valid unique clientId issued by Mitel
+    }
 }
 ```
 
