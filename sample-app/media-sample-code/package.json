@@ -1,0 +1,17 @@
+{
+  "name": "media-sample-code",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "isomorphic-fetch": "^3.0.0",
+    "prompt-sync": "^4.2.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "lint": "eslint --config ./.eslintrc.json ./"
+  }
+}
