@@ -1,9 +1,9 @@
-# Authentication Sample Code
+# Media Services Sample Code
 
 This Media Services sample code is used to demonstrate how to use the Media Services API.
 
 ## Pre-requisites
-Ideally this sample application should be used with 2 users which have desk phone extensions
+Ideally this sample application should be used with 2 users which have desk phone extensions.
 [Node.js](https://nodejs.org/en/) - Install node.js
 
 
