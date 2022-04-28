@@ -1,8 +1,8 @@
 module.exports = {
     userdata: {
         response_type: "code",       // no change needed
-        username: "USER_NAME",       // provide your username for user 1
-        password: "PASSWORD",        // provide password for user
+        username: "USER_NAME",       // this is your cloudlink user
+        password: "PASSWORD",        // provide password for your cloudlink user
         account_id: "ACCOUNT_ID",    // provide account_id for user
     },
     appData: {
