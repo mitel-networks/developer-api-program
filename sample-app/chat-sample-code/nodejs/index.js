@@ -1,4 +1,6 @@
 const fetch = require('isomorphic-fetch');
+const os = require('os');
+const package = require('./package.json');
 const inputData = require('./inputData.js')
 
 /**
@@ -17,17 +19,20 @@ async function getCode(userData) {
         }).join('&');
 
         // Call the code api to obtain the valid code
-        const response = await fetch('https://authentication.dev.api.mitel.io/2017-09-01/authorize', {
+        const response = await fetch('https://authentication.api.mitel.io/2017-09-01/authorize', {
             method: 'post',
             body: formData,
             headers: {
-                "Content-Type": "application/x-www-form-urlencoded"
+                "Content-Type": "application/x-www-form-urlencoded",
+                // Pass the x-mitel-app header info
+                'x-mitel-app': `${package.name}/${package.version};platform=${os.platform}/${os.version};session=session-id;`
             }
         });
 
         // If response code is greater than 201, stop the execution and terminate the program
         if (response.status > 201) {
-            throw response;
+            console.log(await response.json());
+            process.exit();
         }
 
         const data = await response.json();
@@ -52,17 +57,20 @@ async function getToken(code, clientId) {
         }
 
         // Call the token api to obtain the valid token
-        const response = await fetch('https://authentication.dev.api.mitel.io/2017-09-01/token', {
+        const response = await fetch('https://authentication.api.mitel.io/2017-09-01/token', {
             method: 'post',
             body:  JSON.stringify(formData),
             headers: {
                 'Content-Type': 'application/json',
-            }
+            },
+            // Pass the x-mitel-app header info
+            'x-mitel-app': `${package.name}/${package.version};platform=${os.platform}/${os.version};session=session-id;`
         });
 
         // If response code is greater than 201, stop the execution and terminate the program
         if (response.status > 201) {
-            throw response;
+            console.log(await response.json());
+            process.exit();
         }
 
         const data = await response.json();
@@ -82,17 +90,20 @@ async function decodeToken(token) {
     try {
 
         // Call the token api to decode/validate the user data
-        const response = await fetch('https://authentication.dev.api.mitel.io/2017-09-01/token', {
+        const response = await fetch('https://authentication.api.mitel.io/2017-09-01/token', {
             method: 'get',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': token
-            }
+            },
+            // Pass the x-mitel-app header info
+            'x-mitel-app': `${package.name}/${package.version};platform=${os.platform}/${os.version};session=session-id;`
         });
 
         // If response code is greater than 201, stop the execution and terminate the program
         if (response.status > 201) {
-            throw response;
+            console.log(await response.json());
+            process.exit();
         }
 
         const userData = await response.json();
@@ -112,19 +123,22 @@ async function decodeToken(token) {
 async function startConversation(token) {
     try {
         // Call create conversation API to start the conversation
-        const response = await fetch('https://chat.dev.api.mitel.io/2017-09-01/conversations', {
+        const response = await fetch('https://chat.api.mitel.io/2017-09-01/conversations', {
             method: 'post',
             body: JSON.stringify(inputData.conversationData),
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': token
 
-            }
+            },
+            // Pass the x-mitel-app header info
+            'x-mitel-app': `${package.name}/${package.version};platform=${os.platform}/${os.version};session=session-id;`
         });
 
         // If response code is greater than 201, stop the execution and terminate the program
         if (response.status > 201) {
-            throw response.json();
+            console.log(await response.json());
+            process.exit();
         }
 
         const data = await response.json();
@@ -150,19 +164,22 @@ async function sendMessage(token, conversationId, username) {
         messageBody.body = `Hi from ${username}`;
 
         // Call the message API to send message
-        const response = await fetch(`https://chat.dev.api.mitel.io/2017-09-01/conversations/${conversationId}/messages`, {
+        const response = await fetch(`https://chat.api.mitel.io/2017-09-01/conversations/${conversationId}/messages`, {
             method: 'post',
             body: JSON.stringify(messageBody),
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': token
 
-            }
+            },
+            // Pass the x-mitel-app header info
+            'x-mitel-app': `${package.name}/${package.version};platform=${os.platform}/${os.version};session=session-id;`
         });
 
         // If response code is greater than 201, stop the execution and terminate the program
         if (response.status > 201) {
-            throw response.json();
+            console.log(await response.json());
+            process.exit();
         }
 
         const data = await response.json();
@@ -181,17 +198,20 @@ async function sendMessage(token, conversationId, username) {
  */
 async function deleteConversation(token, conversationId) {
     try {
-        const response = await fetch(`https://chat.dev.api.mitel.io/2017-09-01/conversations/${conversationId}`, {
+        const response = await fetch(`https://chat.api.mitel.io/2017-09-01/conversations/${conversationId}`, {
             method: 'delete',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': token
 
-            }
+            },
+            // Pass the x-mitel-app header info
+            'x-mitel-app': `${package.name}/${package.version};platform=${os.platform}/${os.version};session=session-id;`
         });
 
         if (response.status > 201) {
-            throw response.json();
+            console.log(await response.json());
+            process.exit();
         }
 
         const data = await response.json();

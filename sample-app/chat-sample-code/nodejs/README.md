@@ -4,7 +4,9 @@ This sample code will create a chat stream, send a message, and then deletes the
 
 ## Pre-requisites
 
-[Node.js](https://nodejs.org/en/) - Install node.js
+* Have an cloudlink account and obtain a client id
+
+* [Node.js](https://nodejs.org/en/) - Install node.js
 
 
 ## Setup
@@ -23,15 +25,15 @@ Open input inputData.js file and modify the below details
 {
     userData: [{
         response_type: "code",       // no change needed
-        username: "USER_NAME",       // provide your username for user 1
-        password: "PASSWORD",        // provide password for user
-        account_id: "ACCOUNT_ID",    // provide account_id for user
+        username: "USER_NAME",       // this is your CloudLink user(user 1)
+        password: "PASSWORD",        // provide password for your CloudLink user(user 1)
+        account_id: "ACCOUNT_ID",    // provide CloudLink account id for user
     },
     {
         response_type: "code",       // no change needed
-        username: "USER_NAME",       // provide your username for user 2
-        password: "PASSWORD",        // provide password for user
-        account_id: "ACCOUNT_ID",    // provide account_id for user
+        username: "USER_NAME",       // this is your CloudLink user(user 2)
+        password: "PASSWORD",        // provide password for your CloudLink user(user 2)
+        account_id: "ACCOUNT_ID",    // provide CloudLink account id for user
     }],
     appData: {
         client_id: "CLIENT_ID"       // provide valid unique clientId issued by Mitel
