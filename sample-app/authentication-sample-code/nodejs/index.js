@@ -1,8 +1,10 @@
 const fetch = require('isomorphic-fetch');
+const os = require('os');
+const package = require('./package.json');
 const inputData = require('./inputData.js')
 
 /**
- * 
+ * Function to get code from auth api
  * @param {userData from inputData} userData 
  * @returns Valid code
  */
@@ -15,18 +17,21 @@ const inputData = require('./inputData.js')
             return encodeURIComponent(key) + '=' + encodeURIComponent(userData[key]);
         }).join('&');
 
-        // Call the code api to obtain the valid code
-        const response = await fetch('https://authentication.dev.api.mitel.io/2017-09-01/authorize', {
+        // Call the auth api to obtain the valid code
+        const response = await fetch('https://authentication.api.mitel.io/2017-09-01/authorize', {
             method: 'post',
             body: formData,
             headers: {
-                "Content-Type": "application/x-www-form-urlencoded"
+                "Content-Type": "application/x-www-form-urlencoded",
+                // Pass the x-mitel-app header info
+                'x-mitel-app': `${package.name}/${package.version};platform=${os.platform}/${os.version};session=session-id;`
             }
         });
 
         // If response code is greater than 201, stop the execution and terminate the program
         if (response.status > 201) {
-            throw response;
+            console.log(await response.json());
+            process.exit();
         }
 
         const data = await response.json();
@@ -51,17 +56,20 @@ async function getToken(code, clientId) {
         }
 
         // Call the token api to obtain the valid token
-        const response = await fetch('https://authentication.dev.api.mitel.io/2017-09-01/token', {
+        const response = await fetch('https://authentication.api.mitel.io/2017-09-01/token', {
             method: 'post',
             body:  JSON.stringify(formData),
             headers: {
                 'Content-Type': 'application/json',
+                // Pass the x-mitel-app header info
+                'x-mitel-app': `${package.name}/${package.version};platform=${os.platform}/${os.version};session=session-id;`
             }
         });
 
         // If response code is greater than 201, stop the execution and terminate the program
         if (response.status > 201) {
-            throw response;
+            console.log(await response.json());
+            process.exit();
         }
 
         const data = await response.json();
