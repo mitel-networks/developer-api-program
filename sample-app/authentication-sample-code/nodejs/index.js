@@ -31,14 +31,8 @@ async function getCode(userData, retries = 0) {
 
         // If error code is 429 try to call api again upto 3 times
         if (response.status === 429) {
-            const interval = backOff.generateBackoffInterval();
+            const interval = backOff.generateBackoffInterval(retries);
             if (retries >= 3) {
-                const currentTime = new Date();
-                currentTime.setSeconds(currentTime.getSeconds() + Math.ceil(interval / 2));                
-                response.headers['retry-after'] = currentTime.toUTCString();
-
-                console.log(await response.json());
-                console.log(response.headers)
                 process.exit();
             }
             await sleep(interval);
@@ -87,14 +81,8 @@ async function getToken(code, clientId, retries = 0) {
 
         // If error code is 429 try to call api again upto 3 times
         if (response.status === 429) {
-            const interval = backOff.generateBackoffInterval();
+            const interval = backOff.generateBackoffInterval(retries);
             if (retries >= 3) {
-                const currentTime = new Date();
-                currentTime.setSeconds(currentTime.getSeconds() + Math.ceil(interval / 2));                
-                response.headers['retry-after'] = currentTime.toUTCString();
-
-                console.log(await response.json());
-                console.log(response.headers)
                 process.exit();
             }
             await sleep(interval);

@@ -11,11 +11,13 @@ const randomMilliseconds = require('./random-milliseconds');
 function generateBackoffInterval(count = 0, base = 1000, maximumBackoff = 128000, jitter = true) {
     // throw an error if count is negative
     if (count < 0) {
-        throw new Error('InvalidArgumentException: count cannot be less than 0');
+        console.log('InvalidArgumentException: count cannot be less than 0');
+        process.exit();
     }
     // throw an error if maximumBackoff is less than base
     if (maximumBackoff < base) {
-        throw new Error('InvalidArgumentException: maximumBackoff cannot be less than base');
+        console.log('InvalidArgumentException: maximumBackoff cannot be less than base');
+        process.exit();
     }
 
     let interval = base * Math.pow(2, count); // calculate back-off interval exponentially
