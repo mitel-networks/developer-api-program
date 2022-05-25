@@ -8,28 +8,24 @@ const randomMilliseconds = require('./random-milliseconds');
 * @param randomize - add jitter to the calculated interval (boolean)
 * @param maximumBackoff - maximum allowed interval for retry backoff (milliseconds)
 */
-function generateBackoffInterval(count = 0, base = 1000, maximumBackoff = 128000, jitter = true) {
-    // throw an error if count is negative
-    if (count < 0) {
-        console.log('InvalidArgumentException: count cannot be less than 0');
-        process.exit();
+function generateBackoffInterval(retryAfter = '', jitter = true) {
+    let delayMs = 2000; // two second default
+    if(retryAfter) {
+        delayMs = new Date(retryAfter).getTime() - Date.now();
     }
-    // throw an error if maximumBackoff is less than base
-    if (maximumBackoff < base) {
-        console.log('InvalidArgumentException: maximumBackoff cannot be less than base');
+
+    if (delayMs < 0) {
+        console.log('InvalidArgumentException: delayMs cannot be less than 0');
         process.exit();
     }
 
-    let interval = base * Math.pow(2, count); // calculate back-off interval exponentially
-
-    if (maximumBackoff) {
-        interval = Math.min(maximumBackoff, interval);
-    }
+    // Add a randomized delay so that not all clients hit the Cloudlink 
+    // platform at the same time
     if (jitter) {
-        return interval + randomMilliseconds.randomMilliseconds();
+        return delayMs + randomMilliseconds.randomMilliseconds();
     }
 
-    return interval;
+    return delayMs;
 }
 
 module.exports = {
