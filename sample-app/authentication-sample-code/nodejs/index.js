@@ -33,6 +33,7 @@ async function getCode(userData, retries = 0) {
         if (response.status === 429) {
             const interval = backOff.generateBackoffInterval(response.headers.get('retry-after'));
             if (retries >= 3) {
+                console.log(await response.json());
                 process.exit();
             }
             await sleep(interval);
@@ -83,6 +84,7 @@ async function getToken(code, clientId, retries = 0) {
         if (response.status === 429) {
             const interval = backOff.generateBackoffInterval(response.headers.get('retry-after'));
             if (retries >= 3) {
+                console.log(await response.json());
                 process.exit();
             }
             await sleep(interval);
