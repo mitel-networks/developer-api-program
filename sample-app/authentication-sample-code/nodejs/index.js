@@ -2,13 +2,14 @@ const fetch = require('isomorphic-fetch');
 const os = require('os');
 const package = require('./package.json');
 const inputData = require('./inputData.js')
+const backOff = require('./backOff');
 
 /**
  * Function to get code from auth api
  * @param {userData from inputData} userData 
  * @returns Valid code
  */
- async function getCode(userData) {
+async function getCode(userData, retries = 0) {
     try {
         // Add client_id in userData to send in get code api request body
         userData.client_id = inputData.appData.client_id;
@@ -28,6 +29,19 @@ const inputData = require('./inputData.js')
             }
         });
 
+        // If error code is 429 try to call api again upto 3 times
+        if (response.status === 429) {
+            const interval = backOff.generateBackoffInterval(response.headers.get('retry-after'));
+            if (retries >= 3) {
+                console.log(await response.json());
+                process.exit();
+            }
+            await sleep(interval);
+            console.log(`Waited for ${interval} ms`)
+            console.log(`Retrying to call getCode ${retries + 1} time`)
+            await getCode(userData, retries + 1)
+        }
+
         // If response code is greater than 201, stop the execution and terminate the program
         if (response.status > 201) {
             console.log(await response.json());
@@ -46,7 +60,7 @@ const inputData = require('./inputData.js')
  * Function to call Token API to fetch bearer token
  * @returns bearer token
  */
-async function getToken(code, clientId) {
+async function getToken(code, clientId, retries = 0) {
     try {
         // Create form data for authorize api to fetch bearer token
         let formData = {
@@ -58,13 +72,26 @@ async function getToken(code, clientId) {
         // Call the token api to obtain the valid token
         const response = await fetch('https://authentication.api.mitel.io/2017-09-01/token', {
             method: 'post',
-            body:  JSON.stringify(formData),
+            body: JSON.stringify(formData),
             headers: {
                 'Content-Type': 'application/json',
                 // Pass the x-mitel-app header info
                 'x-mitel-app': `${package.name}/${package.version};platform=${os.platform}/${os.version};session=session-id;`
             }
         });
+
+        // If error code is 429 try to call api again upto 3 times
+        if (response.status === 429) {
+            const interval = backOff.generateBackoffInterval(response.headers.get('retry-after'));
+            if (retries >= 3) {
+                console.log(await response.json());
+                process.exit();
+            }
+            await sleep(interval);
+            console.log(`Waited for ${interval} ms`)
+            console.log(`Retrying to call getToken ${retries + 1} time`)
+            await getToken(code, clientId, retries + 1)
+        }
 
         // If response code is greater than 201, stop the execution and terminate the program
         if (response.status > 201) {
@@ -92,6 +119,17 @@ async function main(inputData) {
     // Print the token data
     console.log('Token data: ', token);
     return token;
+}
+
+/**
+ * Fucntion to implement sleep
+ * @param {time interval} ms 
+ * @returns 
+ */
+function sleep(ms) {
+    return new Promise((resolve) => {
+        setTimeout(resolve, ms);
+    });
 }
 
 // Calling the main function
